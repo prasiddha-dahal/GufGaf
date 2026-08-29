@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "72080522992",
+    "project_id": "gufgaf-4f4dd",
+    "storage_bucket": "gufgaf-4f4dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72080522992:android:ecd712249b028913b64c35",
+        "android_client_info": {
+          "package_name": "com.example.gufgaf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIzcrQ4Q4PK1_55_SkCSrD9afegZBM330"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
