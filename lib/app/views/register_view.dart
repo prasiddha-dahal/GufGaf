@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:gufgaf/app/constants/app_constants.dart';
+import 'package:gufgaf/app/controllers/auth_controller.dart';
 import 'package:gufgaf/app/routes/app_routes.dart';
 
 class RegisterView extends StatelessWidget {
-  const RegisterView({super.key});
+  RegisterView({super.key});
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  final authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +30,7 @@ class RegisterView extends StatelessWidget {
                     const Text("Register", style: TextStyle(fontSize: 30),),
                     Gap(AppConstants.mediumVerticalGap),
                     TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email_outlined),
                         label:const Text("Email"),
@@ -34,22 +41,32 @@ class RegisterView extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     Gap(AppConstants.smallVerticalGap),
-                    TextField(
-                      obscureText: true,
+                    Obx((){
+                    return TextField(
+                      controller: passwordController,
+                      obscureText: authController.isPasswordVisible.value,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(onPressed: (){}, icon: const Icon(Icons.visibility)),
+                        suffixIcon: IconButton(onPressed: (){
+                          authController.passwordVisibilityToggle();
+                        }, icon: (authController.isPasswordVisible.value) ? Icon(Icons.visibility) : Icon(Icons.visibility_off)),
                         label: Text("Password"),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ),
-                    Gap(AppConstants.mediumVerticalGap),
+                    );
+
+                    }),
+                   Gap(AppConstants.mediumVerticalGap),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {},
+                      child: OutlinedButton(
+                        onPressed: () {
+                          authController.register(emailController.text.trim(), passwordController.text.trim());
+                          emailController.text = '';
+                          passwordController.text = '';
+                        },
                         child: const Text("Register"),
                       ),
                     ),

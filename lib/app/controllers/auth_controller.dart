@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class AuthController extends GetxController{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   var isLoading = false.obs;
+  var isPasswordVisible = false.obs;
 
   Future register(String email, String password) async{
     try {
@@ -28,6 +29,12 @@ class AuthController extends GetxController{
       isLoading.value = false;
     }
   }
+
+
+  void passwordVisibilityToggle(){
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
 
   Future logout() async{
     await _auth.signOut();
