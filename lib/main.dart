@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gufgaf/app/routes/app_pages.dart';
+import 'package:gufgaf/app/routes/app_routes.dart';
 import 'package:gufgaf/firebase_options.dart';
 
 void main() async {
@@ -22,7 +24,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const Text("Hello world"),
+      initialRoute: AppRoutes.login,
+      getPages: AppPages.routes,
     );
   }
 }
