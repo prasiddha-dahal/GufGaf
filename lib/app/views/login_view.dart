@@ -44,7 +44,7 @@ class LoginView extends StatelessWidget {
                     Obx((){
                     return TextField(
                       controller: passwordController,
-                      obscureText: authController.isPasswordVisible.value,
+                      obscureText: !authController.isPasswordVisible.value,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock_outline),
                         suffixIcon: IconButton(

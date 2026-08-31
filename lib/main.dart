@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:gufgaf/app/bindings/controller_bindings.dart';
 import 'package:gufgaf/app/routes/app_pages.dart';
 import 'package:gufgaf/app/routes/app_routes.dart';
+import 'package:gufgaf/app/utils/auth_gate.dart';
 import 'package:gufgaf/firebase_options.dart';
 
 void main() async {
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: AppRoutes.login,
+      home: AuthGate(),
       getPages: AppPages.routes,
       initialBinding: ControllerBindings(),
     );
