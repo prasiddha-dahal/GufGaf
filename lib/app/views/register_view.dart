@@ -10,6 +10,7 @@ class RegisterView extends StatelessWidget {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   final authController = Get.find<AuthController>();
 
@@ -29,6 +30,20 @@ class RegisterView extends StatelessWidget {
                   children: [
                     const Text("Register", style: TextStyle(fontSize: 30),),
                     Gap(AppConstants.mediumVerticalGap),
+
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person_outline),
+                        label:const Text("Name"),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+
+                    Gap(AppConstants.smallVerticalGap),
+
                     TextField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -40,11 +55,13 @@ class RegisterView extends StatelessWidget {
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
+
                     Gap(AppConstants.smallVerticalGap),
+
                     Obx((){
                     return TextField(
                       controller: passwordController,
-                      obscureText: authController.isPasswordVisible.value,
+                      obscureText: !authController.isPasswordVisible.value,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock_outline),
                         suffixIcon: IconButton(onPressed: (){
@@ -63,7 +80,8 @@ class RegisterView extends StatelessWidget {
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: () {
-                          authController.register(emailController.text.trim(), passwordController.text.trim());
+                          authController.register(nameController.text.trim(), emailController.text.trim(), passwordController.text.trim());
+                          nameController.text='';
                           emailController.text = '';
                           passwordController.text = '';
                         },
@@ -74,7 +92,7 @@ class RegisterView extends StatelessWidget {
                     Row(
                       children: [
                         const Text("Already has an account? "),
-                        InkWell(child: const Text("Login"),onTap: (){
+                        InkWell(child: const Text("Login", style: TextStyle(fontWeight: FontWeight.bold),),onTap: (){
                           Get.offNamed(AppRoutes.login);
                         },),
                       ],
