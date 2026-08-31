@@ -47,12 +47,6 @@ class UserController extends GetxController {
     }
   }
 
-
-
-
-
-
-
   @override
   void onInit() async{
     super.onInit();

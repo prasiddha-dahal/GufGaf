@@ -26,6 +26,4 @@ class UserService {
     await _firestore.collection('users').doc(uid).update(data);
   }
 
-
-
 }
