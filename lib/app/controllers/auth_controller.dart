@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:gufgaf/app/models/app_user_model.dart';
-import 'package:gufgaf/app/routes/app_routes.dart';
+import 'package:gufgaf/app/controllers/user_controller.dart';
 import 'package:gufgaf/app/services/user_service.dart';
+import 'package:gufgaf/app/utils/auth_gate.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,8 +30,11 @@ class AuthController extends GetxController {
 
       await UserService.createUser(user);
 
+      final userController = Get.find<UserController>();
+      await userController.loadCurrentUser(firebaseUser.uid);
+
       Get.snackbar('success', 'Account created successfully');
-      Get.offAllNamed(AppRoutes.home);
+      Get.offAll(() => const AuthGate());
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Failed', e.message ?? 'something went wrong');
     } finally {
@@ -42,7 +46,15 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      final firebaseUser = _auth.currentUser;
+      if (firebaseUser != null) {
+        final userController = Get.find<UserController>();
+        await userController.loadCurrentUser(firebaseUser.uid);
+      }
+
       Get.snackbar('success', 'Login successfully');
+      Get.offAll(() => const AuthGate());
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Failed', e.message ?? 'something went wrong');
     } finally {
@@ -56,5 +68,8 @@ class AuthController extends GetxController {
 
   Future logout() async {
     await _auth.signOut();
+    final userController = Get.find<UserController>();
+    userController.currentUser.value = null;
+    Get.offAll(() => const AuthGate());
   }
 }

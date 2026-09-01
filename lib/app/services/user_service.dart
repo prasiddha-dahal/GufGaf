@@ -17,13 +17,26 @@ class UserService {
     return AppUserModel.fromJson(document.data()!);
   }
 
-  static Future<void> updateUser(
-    {
-      required String uid,
-      required Map<String, dynamic> data
-    }
-  ) async {
+  static Future<void> updateUser({
+    required String uid,
+    required Map<String, dynamic> data,
+  }) async {
     await _firestore.collection('users').doc(uid).update(data);
   }
 
+  static Future<List<AppUserModel>> searchUsers(
+    String query,
+    String currentUid,
+  ) async {
+    final snapshot = await _firestore
+        .collection('users')
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThan: '$query\uf8ff')
+        .get();
+
+    return snapshot.docs
+        .map((doc) => AppUserModel.fromJson(doc.data()))
+        .where((user) => user.uid != currentUid)
+        .toList();
+  }
 }

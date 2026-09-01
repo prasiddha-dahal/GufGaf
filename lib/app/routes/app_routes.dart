@@ -4,5 +4,6 @@ class AppRoutes {
   static String register = '/register';
   static String home = '/home';
   static String profile = '/profile';
+  static String searchUsers = '/searchUsers';
 
 }

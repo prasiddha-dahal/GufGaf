@@ -31,7 +31,7 @@ class HomeView extends StatelessWidget {
           children: [
             Text("Home page"),
             Gap(20),
-            Text("Welcome ${userController.currentUser.value!.name}"),
+            Obx(() => Text("Welcome ${userController.currentUser.value?.name ?? 'Loading...'}")),
           ],
         ),
       ),
@@ -43,11 +43,14 @@ class HomeView extends StatelessWidget {
             Get.offNamed(AppRoutes.home);
           }else if( index == 1){
             Get.offNamed(AppRoutes.profile);
-          }
+          }else if( index == 2){
+            Get.toNamed(AppRoutes.searchUsers);
+          } 
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search Users"),
         ],
       ),
     );
