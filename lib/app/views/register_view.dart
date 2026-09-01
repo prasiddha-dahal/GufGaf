@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:gufgaf/app/constants/app_constants.dart';
@@ -79,8 +80,10 @@ class RegisterView extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () {
-                          authController.register(nameController.text.trim(), emailController.text.trim(), passwordController.text.trim());
+                        onPressed: () async{
+                          Loader.show(context);
+                          await authController.register(nameController.text.trim(), emailController.text.trim(), passwordController.text.trim());
+                          Loader.hide();
                           nameController.text='';
                           emailController.text = '';
                           passwordController.text = '';

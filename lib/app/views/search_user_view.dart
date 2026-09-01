@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:gufgaf/app/controllers/chat_controller.dart';
 import 'package:gufgaf/app/controllers/user_controller.dart';
 import 'package:gufgaf/app/routes/app_routes.dart';
+import 'package:gufgaf/app/views/chat_view.dart';
 
 class SearchUserView extends StatelessWidget {
   SearchUserView({super.key});
 
   final userController = Get.find<UserController>();
+  final chatController = Get.find<ChatController>();
   final searchController = TextEditingController();
   int currentValue = 2;
 
@@ -16,6 +19,7 @@ class SearchUserView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Search Users")),
       bottomNavigationBar: BottomNavigationBar(
+        
         currentIndex: currentValue,
         onTap: (index) {
           if (index == 0) {
@@ -69,7 +73,16 @@ class SearchUserView extends StatelessWidget {
                           child: Text(user.name[0].toUpperCase()),
                         ),
                         title: Text(user.name),
-                        onTap: () {},
+                        onTap: () async{
+                          final chatId = await chatController.startChat(user.uid); 
+                          if(chatId == null){
+                            return;
+                          }
+                          searchController.text = '';
+
+                          Get.to(()=>ChatView(
+                          ));
+                        },
                       );
                     },
                   );

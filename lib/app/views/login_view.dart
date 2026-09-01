@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:gufgaf/app/constants/app_constants.dart';
@@ -65,11 +66,13 @@ class LoginView extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () {
-                          authController.login(
+                        onPressed: () async{
+                          Loader.show(context);
+                          await authController.login(
                             emailController.text.trim(),
                             passwordController.text.trim(),
                           );
+                          Loader.hide();
                           emailController.text = '';
                           passwordController.text = '';
                         },
