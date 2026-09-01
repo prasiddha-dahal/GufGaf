@@ -80,8 +80,7 @@ class SearchUserView extends StatelessWidget {
                           }
                           searchController.text = '';
 
-                          Get.to(()=>ChatView(
-                          ));
+                          Get.to(()=> ChatView(chatId: chatId, otherUser: user) );
                         },
                       );
                     },
