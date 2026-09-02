@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:gufgaf/app/models/chat_model.dart';
 import 'package:gufgaf/app/models/message_model.dart';
 
 import '../services/chat_service.dart';
@@ -54,6 +55,10 @@ class ChatController extends GetxController {
   }
 
   Stream<List<MessageModel>> getMessages(String chatId) {
-  return ChatService.getMessages(chatId);
-}
+    return ChatService.getMessages(chatId);
+  }
+
+  Stream<List<ChatModel>> getMyChats(String uid) {
+    return ChatService.getMyChats(uid);
+  }
 }

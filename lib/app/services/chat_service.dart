@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gufgaf/app/models/chat_model.dart';
 import 'package:gufgaf/app/models/message_model.dart';
 
 class ChatService {
@@ -56,21 +57,38 @@ class ChatService {
   }
 
   static Stream<List<MessageModel>> getMessages(String chatId) {
+    return _firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => MessageModel.fromJson(doc.data(), doc.id))
+              .toList(),
+        );
+  }
+
+  static Stream<List<ChatModel>> getMyChats(String uid) {
   return _firestore
       .collection('chats')
-      .doc(chatId)
-      .collection('messages')
-      .orderBy('createdAt', descending: true)
+      .where(
+        'participants',
+        arrayContains: uid,
+      )
       .snapshots()
       .map(
-        (snapshot) => snapshot.docs
-            .map(
-              (doc) => MessageModel.fromJson(
-                doc.data(),
-                doc.id,
-              ),
-            )
-            .toList(),
+        (snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) => ChatModel.fromJson(
+                  doc.data(),
+                  doc.id,
+                ),
+              )
+              .toList();
+        },
       );
 }
 
