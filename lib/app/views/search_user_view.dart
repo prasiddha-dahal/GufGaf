@@ -17,6 +17,22 @@ class _SearchUserViewState extends State<SearchUserView> {
   final userController = Get.find<UserController>();
   final chatController = Get.find<ChatController>();
   final searchController = TextEditingController();
+  int currentIndex = 2;
+
+  void _onTabTapped(int index) {
+    if (index == currentIndex) return;
+
+    setState(() {
+      currentIndex = index;
+    });
+
+    if (index == 0) {
+      Get.offNamed(AppRoutes.home);
+    } else if (index == 1) {
+      Get.offNamed(AppRoutes.profile);
+    }
+  }
+
 
   @override
   void dispose() {
@@ -37,20 +53,26 @@ class _SearchUserViewState extends State<SearchUserView> {
         elevation: 0,
         scrolledUnderElevation: 2,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) {
-            Get.offNamed(AppRoutes.home);
-          } else if (index == 1) {
-            Get.offNamed(AppRoutes.profile);
-          }
-          // Prevent re-navigating to the current tab
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Profile"),
-          BottomNavigationBarItem(icon: Icon(Icons.search_rounded), label: "Search"),
+
+        bottomNavigationBar: NavigationBar(
+        selectedIndex: currentIndex,
+        onDestinationSelected: _onTabTapped,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.chat_bubble_outline_rounded),
+            selectedIcon: Icon(Icons.chat_bubble_rounded),
+            label: 'Chats',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline_rounded),
+            selectedIcon: Icon(Icons.person_rounded),
+            label: 'Profile',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_rounded),
+            selectedIcon: Icon(Icons.search_rounded),
+            label: 'Search',
+          ),
         ],
       ),
       body: SafeArea(

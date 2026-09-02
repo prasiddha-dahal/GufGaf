@@ -4,92 +4,219 @@ import 'package:get/get.dart';
 import 'package:gufgaf/app/controllers/user_controller.dart';
 import 'package:gufgaf/app/routes/app_routes.dart';
 
-class ProfileView extends StatelessWidget {
-  ProfileView({super.key});
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
 
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
   final userController = Get.find<UserController>();
+
   final name = TextEditingController();
-  int currentValue = 1;
+
+  int currentIndex = 1;
+
+  void _onTabTapped(int index) {
+    if (index == currentIndex) return;
+
+    setState(() {
+      currentIndex = index;
+    });
+
+    if (index == 0) {
+      Get.offNamed(AppRoutes.home);
+    } else if (index == 2) {
+      Get.offNamed(AppRoutes.searchUsers);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Profile"), centerTitle: true),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentValue,
-        onTap: (index) {
-          if (index == 0) {
-            Get.offNamed(AppRoutes.home);
-          } else if (index == 1) {
-            Get.offNamed(AppRoutes.profile);
-          } else if (index == 2) {
-            Get.toNamed(AppRoutes.searchUsers);
-          }
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search Users"),
-        ],
-      ),
+    final theme = Theme.of(context);
 
-      body: Obx(() {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Profile",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        scrolledUnderElevation: 2,
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentIndex,
+        onDestinationSelected: _onTabTapped,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.chat_bubble_outline_rounded),
+            selectedIcon: Icon(Icons.chat_bubble_rounded),
+            label: 'Chats',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline_rounded),
+            selectedIcon: Icon(Icons.person_rounded),
+            label: 'Profile',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_rounded),
+            selectedIcon: Icon(Icons.search_rounded),
+            label: 'Search',
+          ),
+        ],
+      ),     body: Obx(() {
         final user = userController.currentUser.value;
 
         if (user == null) {
           return const Center(
-            child: CircularProgressIndicator(strokeWidth: 10),
+            child: CircularProgressIndicator(),
           );
         }
-        return Padding(
-          padding: EdgeInsets.all(12),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
-                Gap(30),
-                Text(
-                  user.name,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Gap(10),
-                Text(user.email),
-                Gap(30),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Get.dialog(
-                      AlertDialog(
-                        title: Text("edit name"),
-                        content: TextField(
-                          controller: name,
-                          decoration: InputDecoration(labelText: "Name"),
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Gap(20),
+                  // Profile Avatar Header
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 54,
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        child: Text(
+                          user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            child: Text("Cancel"),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (name.text.isEmpty) {
-                                return;
-                              }
-                              userController.updateUser(name.text);
-                              Get.back();
-                            },
-                            child: Text("Save"),
-                          ),
-                        ],
                       ),
-                    );
-                  },
-                  label: Text("Edit"),
-                  icon: Icon(Icons.edit),
-                ),
-              ],
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: theme.colorScheme.surface,
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.person_rounded,
+                          size: 16,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Gap(24),
+
+                  // User Info Card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          user.name,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const Gap(6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.email_outlined,
+                              size: 16,
+                              color: theme.colorScheme.outline,
+                            ),
+                            const Gap(6),
+                            Text(
+                              user.email,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(24),
+
+                  // Edit Profile Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () {
+                        name.text = user.name;
+                        Get.dialog(
+                          AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: const Text("Edit Name"),
+                            content: TextField(
+                              controller: name,
+                              decoration: InputDecoration(
+                                labelText: "Name",
+                                filled: true,
+                                fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(color: theme.colorScheme.outline),
+                                ),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  if (name.text.isEmpty) {
+                                    return;
+                                  }
+                                  userController.updateUser(name.text);
+                                  Get.back();
+                                },
+                                child: const Text("Save"),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      label: const Text("Edit Profile"),
+                      icon: const Icon(Icons.edit_rounded, size: 18),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

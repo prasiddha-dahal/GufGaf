@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:gufgaf/app/bindings/controller_bindings.dart';
 import 'package:gufgaf/app/routes/app_pages.dart';
 import 'package:gufgaf/app/routes/app_routes.dart';
+import 'package:gufgaf/app/utils/app_theme.dart';
 import 'package:gufgaf/app/utils/auth_gate.dart';
 import 'package:gufgaf/firebase_options.dart';
 
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-       colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor:Colors.blue ,brightness: Brightness.dark)
       ),
       home: AuthGate(),
       getPages: AppPages.routes,
