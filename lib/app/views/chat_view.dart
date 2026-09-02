@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gufgaf/app/widgets/typing_indicator.dart';
 
 import '../controllers/chat_controller.dart';
 import '../models/app_user_model.dart';
@@ -52,96 +53,101 @@ class _ChatViewState extends State<ChatView> {
       appBar: AppBar(
         title: Text(widget.otherUser.name),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder(
-              stream: chatController.getMessages(widget.chatId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('Start the conversation'),
-                  );
-                }
-
-                final messages = snapshot.data!;
-
-                return ListView.builder(
-                  reverse: true,
-                  padding: const EdgeInsets.all(12),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-
-                    final isMe =
-                        message.senderId == currentUid;
-
-                    return Align(
-                      alignment: isMe
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? Colors.blue
-                              : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          message.text,
-                          style: TextStyle(
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
+                stream: chatController.getMessages(widget.chatId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+        
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text('Start the conversation'),
+                    );
+                  }
+        
+                  final messages = snapshot.data!;
+        
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      final isMe =
+                          message.senderId == currentUid;
+        
+                      return Align(
+                        alignment: isMe
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
                             color: isMe
-                                ? Colors.white
-                                : Colors.black,
+                                ? Colors.blue
+                                : Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            message.text,
+                            style: TextStyle(
+                              color: isMe
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Type a message...',
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(24),
-                        ),
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _sendMessage,
-                    icon: const Icon(Icons.send),
-                  ),
-                ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TypingIndicator(),
+            ),
+        
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message...',
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(24),
+                          ),
+                        ),
+                        onSubmitted: (_) => _sendMessage(),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _sendMessage,
+                      icon: const Icon(Icons.send),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

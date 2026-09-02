@@ -61,4 +61,8 @@ class ChatController extends GetxController {
   Stream<List<ChatModel>> getMyChats(String uid) {
     return ChatService.getMyChats(uid);
   }
+
+  String getOtherUserId(ChatModel chat, String currentUid) {
+    return chat.participants.firstWhere((uid) => uid != currentUid);
+  }
 }
