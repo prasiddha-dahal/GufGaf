@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gufgaf/app/widgets/typing_indicator.dart';
 
 import '../controllers/chat_controller.dart';
 import '../models/app_user_model.dart';
@@ -25,6 +24,7 @@ class _ChatViewState extends State<ChatView> {
 
   final TextEditingController messageController =
       TextEditingController();
+
 
   @override
   void dispose() {
@@ -114,10 +114,6 @@ class _ChatViewState extends State<ChatView> {
                   );
                 },
               ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TypingIndicator(),
             ),
         
             SafeArea(
