@@ -39,4 +39,24 @@ class UserService {
         .where((user) => user.uid != currentUid)
         .toList();
   }
+
+  /// Update user's online/offline status in Firestore
+  static Future<void> setOnlineStatus({
+    required String uid,
+    required bool isOnline,
+  }) async {
+    await _firestore.collection('users').doc(uid).update({
+      'isOnline': isOnline,
+      'lastSeen': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Real-time stream of a single user's data (for live online status)
+  static Stream<AppUserModel?> getUserStream(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map((doc) {
+      if (!doc.exists || doc.data() == null) return null;
+      return AppUserModel.fromJson(doc.data()!);
+    });
+  }
 }
+

@@ -4,6 +4,8 @@ class AppUserModel {
   final String email;
   final String? profileImage;
   final DateTime createdAt;
+  final bool isOnline;
+  final DateTime? lastSeen;
 
   AppUserModel({
     required this.uid,
@@ -11,6 +13,8 @@ class AppUserModel {
     required this.email,
     this.profileImage,
     required this.createdAt,
+    this.isOnline = false,
+    this.lastSeen,
   });
 
   Map<String, dynamic> toJson() {
@@ -31,6 +35,8 @@ class AppUserModel {
       email: json['email'],
       profileImage: json['profileImage'],
       createdAt: json['createdAt'].toDate(),
+      isOnline: json['isOnline'] ?? false,
+      lastSeen: json['lastSeen']?.toDate(),
     );
   }
 }

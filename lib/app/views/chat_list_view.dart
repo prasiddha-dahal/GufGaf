@@ -135,8 +135,8 @@ class _ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return FutureBuilder<AppUserModel?>(
-      future: UserService.getUser(otherUserId),
+    return StreamBuilder<AppUserModel?>(
+      stream: UserService.getUserStream(otherUserId),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return Card(
@@ -164,17 +164,38 @@ class _ChatTile extends StatelessWidget {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            leading: CircleAvatar(
-              radius: 26,
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: Text(
-                firstInitial,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: theme.colorScheme.onPrimaryContainer,
+            leading: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  child: Text(
+                    firstInitial,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: theme.colorScheme.onPrimaryContainer,
+                    ),
+                  ),
                 ),
-              ),
+                if (otherUser.isOnline)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: theme.colorScheme.surface,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             title: Text(
               otherUser.name,

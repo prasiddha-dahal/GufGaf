@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../controllers/chat_controller.dart';
 import '../models/app_user_model.dart';
+import '../services/user_service.dart';
 
 class ChatView extends StatefulWidget {
   final String chatId;
@@ -46,6 +47,16 @@ class _ChatViewState extends State<ChatView> {
     messageController.clear();
   }
 
+  String _formatLastSeen(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = now.difference(dateTime);
+
+    if (diff.inMinutes < 1) return 'Last seen just now';
+    if (diff.inMinutes < 60) return 'Last seen ${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return 'Last seen ${diff.inHours}h ago';
+    return 'Last seen ${DateFormat('MMM d, h:mm a').format(dateTime)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -56,34 +67,81 @@ class _ChatViewState extends State<ChatView> {
         titleSpacing: 0,
         elevation: 0,
         scrolledUnderElevation: 2,
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: Text(
-                widget.otherUser.name.isNotEmpty
-                    ? widget.otherUser.name[0].toUpperCase()
-                    : '?',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onPrimaryContainer,
+        title: StreamBuilder<AppUserModel?>(
+          stream: UserService.getUserStream(widget.otherUser.uid),
+          builder: (context, snapshot) {
+            final user = snapshot.data ?? widget.otherUser;
+
+            return Row(
+              children: [
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      child: Text(
+                        user.name.isNotEmpty
+                            ? user.name[0].toUpperCase()
+                            : '?',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    if (user.isOnline)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: theme.colorScheme.surface,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ),
-            const Gap(12),
-            Expanded(
-              child: Text(
-                widget.otherUser.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                const Gap(12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        user.isOnline
+                            ? 'Online'
+                            : user.lastSeen != null
+                                ? _formatLastSeen(user.lastSeen!)
+                                : '',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: user.isOnline
+                              ? Colors.green
+                              : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       body: Stack(
