@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gufgaf/app/bindings/controller_bindings.dart';
 import 'package:gufgaf/app/routes/app_pages.dart';
-import 'package:gufgaf/app/routes/app_routes.dart';
-import 'package:gufgaf/app/utils/app_theme.dart';
+import 'package:gufgaf/app/services/notification_service.dart';
 import 'package:gufgaf/app/utils/auth_gate.dart';
 import 'package:gufgaf/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService.initialize();
 
   runApp(const MyApp());
 }

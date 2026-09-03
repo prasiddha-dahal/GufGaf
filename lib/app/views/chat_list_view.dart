@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../controllers/chat_controller.dart';
 import '../models/app_user_model.dart';
@@ -74,7 +75,7 @@ class ChatListView extends StatelessWidget {
                 Icon(
                   Icons.chat_bubble_outline_rounded,
                   size: 72,
-                  color: theme.colorScheme.outline.withOpacity(0.5),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.5),
                 ),
                 const Gap(16),
                 Text(
@@ -103,6 +104,11 @@ class ChatListView extends StatelessWidget {
           itemBuilder: (context, index) {
             final chat = chats[index];
             final otherUserId = chatController.getOtherUserId(chat, currentUser.uid);
+
+            // Skip chats with no valid participants
+            if (otherUserId.isEmpty) {
+              return const SizedBox.shrink();
+            }
 
             return _ChatTile(
               chat: chat,
@@ -135,7 +141,7 @@ class _ChatTile extends StatelessWidget {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return Card(
             elevation: 0,
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.2),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: const ListTile(
               leading: CircleAvatar(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
@@ -152,7 +158,7 @@ class _ChatTile extends StatelessWidget {
 
         return Card(
           elevation: 0,
-          color: theme.colorScheme.surfaceVariant.withOpacity(0.35),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -192,10 +198,15 @@ class _ChatTile extends StatelessWidget {
                 ),
               ),
             ),
-            trailing: Icon(
-              Icons.chevron_right_rounded,
-              color: theme.colorScheme.outline,
-            ),
+            trailing: chat.lastMessageAt != null
+                ? Text(
+                    _formatChatTime(chat.lastMessageAt!),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.outline,
+                    ),
+                  )
+                : null,
             onTap: () {
               Get.to(() => ChatView(chatId: chat.id, otherUser: otherUser));
             },
@@ -203,5 +214,21 @@ class _ChatTile extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _formatChatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final messageDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+    if (messageDate == today) {
+      return DateFormat('h:mm a').format(dateTime);
+    } else if (messageDate == today.subtract(const Duration(days: 1))) {
+      return 'Yesterday';
+    } else if (now.difference(dateTime).inDays < 7) {
+      return DateFormat('EEE').format(dateTime); // e.g., "Mon"
+    } else {
+      return DateFormat('MMM d').format(dateTime); // e.g., "Aug 28"
+    }
   }
 }

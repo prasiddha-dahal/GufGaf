@@ -102,7 +102,7 @@ class _SearchUserViewState extends State<SearchUserView> {
                             )
                           : null,
                       filled: true,
-                      fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14,
                         horizontal: 16,
@@ -178,7 +178,7 @@ class _SearchUserViewState extends State<SearchUserView> {
 
                       return Card(
                         elevation: 0,
-                        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -208,7 +208,7 @@ class _SearchUserViewState extends State<SearchUserView> {
                           trailing: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(

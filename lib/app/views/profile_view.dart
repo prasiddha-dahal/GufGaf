@@ -123,7 +123,7 @@ class _ProfileViewState extends State<ProfileView> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
@@ -175,7 +175,7 @@ class _ProfileViewState extends State<ProfileView> {
                               decoration: InputDecoration(
                                 labelText: "Name",
                                 filled: true,
-                                fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                                fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

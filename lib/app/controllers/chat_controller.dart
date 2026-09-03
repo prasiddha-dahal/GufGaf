@@ -63,6 +63,9 @@ class ChatController extends GetxController {
   }
 
   String getOtherUserId(ChatModel chat, String currentUid) {
-    return chat.participants.firstWhere((uid) => uid != currentUid);
+    return chat.participants.firstWhere(
+      (uid) => uid != currentUid,
+      orElse: () => '',
+    );
   }
 }
