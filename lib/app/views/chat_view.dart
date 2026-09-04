@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:gufgaf/app/services/audio_service.dart';
 import 'package:intl/intl.dart';
 
 import '../controllers/chat_controller.dart';
@@ -285,6 +286,19 @@ class _ChatViewState extends State<ChatView> {
                         ),
                       ),
                       const Gap(8),
+
+                      IconButton(onPressed: () async{
+                        await AudioService.startRecording('/data/user/0/com.example.gufgaf/cache/test.m4a',);
+                      }, icon: Icon(Icons.mic)),
+
+                      IconButton(onPressed: () async{
+                        final path = await AudioService.stopRecording();
+                        print("recorded path: $path");
+                      }, icon: Icon(Icons.mic_off)),
+
+
+                      const Gap(8),
+
                       IconButton.filled(
                         onPressed: _sendMessage,
                         style: IconButton.styleFrom(
